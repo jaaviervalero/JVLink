@@ -52,10 +52,10 @@ async def root(request: Request):
         request=request, name="index.html")
 
 @app.post("/shorten")
-async def shorten_url(request: LinkRequest, db: Session = fastapi.Depends(get_db)):
-    clean_url = request.url
+async def shorten_url(data: LinkRequest, request: Request, db: Session = fastapi.Depends(get_db)):
+    clean_url = data.url
     if not clean_url.startswith("http://") and not clean_url.startswith("https://"):
-        clean_url = "https://" + clean_url
+        clean_url = "https://" + clean_url  
     
     next_id_query = text("SELECT nextval('links_id_seq')")
     next_id = db.execute(next_id_query).scalar()
