@@ -40,7 +40,7 @@ def base62_encode(num : int) -> str:
         num //= 62
     return base62 or "0"
 
-templates = Jinja2Templates(directory="../templates")
+templates = Jinja2Templates(directory="/app/templates")
 app = fastapi.FastAPI()
 
 class LinkRequest(BaseModel):
