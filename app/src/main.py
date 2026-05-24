@@ -62,7 +62,11 @@ async def shorten_url(data: LinkRequest, request: Request, db: Session = fastapi
     
     code = base62_encode(next_id)
     
-    new_link = Link(id=next_id, original_url=request.url, short_code=code)
+    new_link = Link(
+        id=next_id, 
+        original_url=str(clean_url), 
+        short_code=code
+    )    
     db.add(new_link)
     db.commit()
     
