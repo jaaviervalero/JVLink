@@ -40,7 +40,7 @@ def base62_encode(num : int) -> str:
         num //= 62
     return base62 or "0"
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="../templates")
 app = fastapi.FastAPI()
 
 class LinkRequest(BaseModel):
@@ -48,7 +48,8 @@ class LinkRequest(BaseModel):
 
 @app.get("/")
 async def root(request: Request):
-   return templates.TemplateResponse("index.html", {"request": request})
+   return templates.TemplateResponse(
+        request=request, name="index.html")
 
 @app.post("/shorten")
 async def shorten_url(request: LinkRequest, db: Session = fastapi.Depends(get_db)):
