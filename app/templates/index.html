@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JVLink - Acortador de URLs</title>
+  </head>
+  <body>
+    <h1>Bienvenido a JVLink 🚀</h1>
+    <p>Acorta tus enlaces largos al instante.</p>
+
+    <div>
+      <input
+        type="url"
+        id="urlInput"
+        placeholder="https://tu-enlace-largo.com"
+        required
+      />
+      <button onclick="acortarEnlace()">Acortar</button>
+    </div>
+
+    <div id="resultado" style="margin-top: 20px; font-weight: bold"></div>
+
+    <script>
+      async function acortarEnlace() {
+        const url = document.getElementById("urlInput").value;
+        const divResultado = document.getElementById("resultado");
+
+        try {
+          const response = await fetch("/shorten", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            // Enviamos los datos exactamente como tu backend los espera
+            body: JSON.stringify({ url: url }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            divResultado.innerHTML = `¡Éxito! Tu enlace: <a href="${data.short_url}" target="_blank">${data.short_url}</a>`;
+          } else {
+            divResultado.innerHTML = `❌ Error: ${data.detail}`;
+          }
+        } catch (error) {
+          divResultado.innerHTML = "❌ Error de conexión.";
+        }
+      }
+    </script>
+  </body>
+</html>

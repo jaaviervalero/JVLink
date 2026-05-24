@@ -1,6 +1,8 @@
 import os
 import fastapi, uvicorn
 
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, Sequence, text
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
@@ -38,14 +40,15 @@ def base62_encode(num : int) -> str:
         num //= 62
     return base62 or "0"
 
+templates = Jinja2Templates(directory="templates")
 app = fastapi.FastAPI()
 
 class LinkRequest(BaseModel):
     url: str
 
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
+async def root(request: Request):
+   return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/shorten")
 async def shorten_url(request: LinkRequest, db: Session = fastapi.Depends(get_db)):
@@ -64,7 +67,7 @@ async def shorten_url(request: LinkRequest, db: Session = fastapi.Depends(get_db
     
     return {
         "original_url": new_link.original_url,
-        "short_url": f"http://localhost:8000/{new_link.short_code}"
+        "short_url": f"{request.base_url}{new_link.short_code}"
     }
 
 @app.get("/{code}")
