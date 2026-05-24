@@ -14,8 +14,8 @@ services:
   db:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=${BD_USERNAME}
+      - POSTGRES_PASSWORD=${BD_PASSWORD}
       - POSTGRES_DB=jvlink_db
     ports:
       - "5432:5432"
