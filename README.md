@@ -6,7 +6,6 @@ A high-availability, Cloud-Native URL shortener built for speed and minimal reso
 
 - **API Engine:** Python (FastAPI)
 - **Database:** PostgreSQL
-- **Infrastructure:** Proxmox LXC, Terraform, Ansible
-- **CI/CD:** GitHub Actions
+- **Infrastructure:** Proxmox LXC
 
 _Currently under construction. MVP incoming._
