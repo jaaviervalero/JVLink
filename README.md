@@ -1,4 +1,4 @@
-# JVLnk 🔗
+# JVLink 🔗
 
 A high-availability, Cloud-Native URL shortener built for speed and minimal resource consumption.
 
