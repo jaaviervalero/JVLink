@@ -23,7 +23,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U ${BD_USERNAME} -d jvlink_db"]
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./databases/schema.sql:/docker-entrypoint-initdb.d/init.sql
 
   cloudflared:
     image: cloudflare/cloudflared:latest
