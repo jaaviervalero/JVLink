@@ -59,13 +59,29 @@ def get_db():
 templates = Jinja2Templates(directory="/app/templates")
 app = fastapi.FastAPI()
 
+HOME_LINK_ID = 9999
+
+@app.on_event("startup")
+def create_home_link():
+    db = SessionLocal()
+    try:
+        exists = db.query(Link).filter(Link.id == HOME_LINK_ID).first()
+        if not exists:
+            db.add(Link(id=HOME_LINK_ID, original_url="/", short_code="__home__"))
+            db.commit()
+    finally:
+        db.close()
+
 class LinkRequest(BaseModel):
     url: str
 
 @app.get("/")
-async def root(request: Request):
-   return templates.TemplateResponse(
-        request=request, name="index.html")
+async def root(request: Request, background_tasks: BackgroundTasks, db: Session = fastapi.Depends(get_db)):
+    client_ip = request.client.host if request.client else "Unknown"
+    user_agent = request.headers.get("user-agent", "Unknown")
+    referer = request.headers.get("referer", "Direct")
+    background_tasks.add_task(save_click_telemetry, db, HOME_LINK_ID, client_ip, user_agent, referer)
+    return templates.TemplateResponse(request=request, name="index.html")
 
 @app.post("/shorten")
 async def shorten_url(data: LinkRequest, request: Request, db: Session = fastapi.Depends(get_db)):
