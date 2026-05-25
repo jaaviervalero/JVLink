@@ -39,6 +39,13 @@ def base62_encode(num : int) -> str:
         num //= 62
     return base62 or "0"
 
+def get_client_ip(request: Request) -> str:
+    return (
+        request.headers.get("cf-connecting-ip") or
+        request.headers.get("x-forwarded-for", "").split(",")[0].strip() or
+        (request.client.host if request.client else "Unknown")
+    )
+
 def save_click_telemetry(db: Session, link_id: int, ip: str, user_agent: str, referer: str):
     new_click = Click(
         link_id=link_id,
@@ -77,7 +84,7 @@ class LinkRequest(BaseModel):
 
 @app.get("/")
 async def root(request: Request, background_tasks: BackgroundTasks, db: Session = fastapi.Depends(get_db)):
-    client_ip = request.client.host if request.client else "Unknown"
+    client_ip = get_client_ip(request)
     user_agent = request.headers.get("user-agent", "Unknown")
     referer = request.headers.get("referer", "Direct")
     background_tasks.add_task(save_click_telemetry, db, HOME_LINK_ID, client_ip, user_agent, referer)
@@ -117,7 +124,7 @@ async def redirect_to_original(
     link = db.query(Link).filter(Link.short_code == code).first()
     
     if link:
-        client_ip = request.client.host if request.client else "Unknown"
+        client_ip = get_client_ip(request)
         user_agent = request.headers.get("user-agent", "Unknown")
         referer = request.headers.get("referer", "Direct")
         
