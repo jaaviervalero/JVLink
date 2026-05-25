@@ -1,4 +1,5 @@
 import os
+import requests
 import fastapi, uvicorn
 
 from fastapi.templating import Jinja2Templates
@@ -29,6 +30,8 @@ class Click(Base):
     ip_address = Column(String(45))
     user_agent = Column(String)
     referer = Column(String)
+    country = Column(String(100))
+    city = Column(String(100))
 
 def base62_encode(num : int) -> str:
     characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -46,12 +49,25 @@ def get_client_ip(request: Request) -> str:
         (request.client.host if request.client else "Unknown")
     )
 
+def get_geo(ip: str) -> dict:
+    try:
+        r = requests.get(f"http://ip-api.com/json/{ip}", timeout=3)
+        data = r.json()
+        if data.get("status") == "success":
+            return {"country": data.get("country"), "city": data.get("city")}
+    except Exception:
+        pass
+    return {"country": None, "city": None}
+
 def save_click_telemetry(db: Session, link_id: int, ip: str, user_agent: str, referer: str):
+    geo = get_geo(ip)
     new_click = Click(
         link_id=link_id,
         ip_address=ip,
         user_agent=user_agent,
-        referer=referer
+        referer=referer,
+        country=geo["country"],
+        city=geo["city"]
     )
     db.add(new_click)
     db.commit()

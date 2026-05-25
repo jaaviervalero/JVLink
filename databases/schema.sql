@@ -17,7 +17,9 @@ CREATE TABLE IF NOT EXISTS clicks (
     clicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ip_address VARCHAR(45),
     user_agent TEXT,
-    referer TEXT
+    referer TEXT,
+    country VARCHAR(100),
+    city VARCHAR(100)
 );
 
 CREATE INDEX IF NOT EXISTS ix_clicks_link_id ON clicks (link_id);
