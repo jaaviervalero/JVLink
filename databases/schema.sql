@@ -8,11 +8,9 @@ CREATE TABLE IF NOT EXISTS links (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Índices para que FastAPI encuentre la URL al instante
 CREATE INDEX IF NOT EXISTS ix_links_short_code ON links (short_code);
 CREATE INDEX IF NOT EXISTS ix_links_id ON links (id);
 
--- 3. Tabla de telemetría (Clics)
 CREATE TABLE IF NOT EXISTS clicks (
     id SERIAL PRIMARY KEY,
     link_id INTEGER NOT NULL REFERENCES links(id) ON DELETE CASCADE,

@@ -1,52 +1,291 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JVLink - Acortador de URLs</title>
+    <title>JVLink - URL Shortener</title>
+    <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        color: #e2e8f0;
+        padding: 1.5rem;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 1.5rem;
+        padding: 2.5rem 2rem;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 1.75rem;
+      }
+
+      .logo h1 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        background: linear-gradient(90deg, #a78bfa, #60a5fa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .logo p {
+        margin-top: 0.4rem;
+        font-size: 0.95rem;
+        color: #94a3b8;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+      }
+
+      input[type="url"] {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      input[type="url"]::placeholder {
+        color: #64748b;
+      }
+
+      input[type="url"]:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+      }
+
+      button.shorten-btn {
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.75rem;
+        border: none;
+        background: linear-gradient(135deg, #818cf8, #60a5fa);
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.2s, transform 0.1s;
+      }
+
+      button.shorten-btn:hover {
+        opacity: 0.9;
+      }
+
+      button.shorten-btn:active {
+        transform: scale(0.97);
+      }
+
+      button.shorten-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .result {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .result.visible {
+        display: flex;
+      }
+
+      .result.error {
+        border-color: rgba(248, 113, 113, 0.4);
+        background: rgba(248, 113, 113, 0.08);
+        color: #fca5a5;
+      }
+
+      .result a {
+        flex: 1;
+        color: #93c5fd;
+        text-decoration: none;
+        font-size: 0.95rem;
+        word-break: break-all;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .result a:hover {
+        text-decoration: underline;
+      }
+
+      .result .error-msg {
+        flex: 1;
+        font-size: 0.9rem;
+      }
+
+      button.copy-btn {
+        flex-shrink: 0;
+        padding: 0.35rem 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      button.copy-btn:hover {
+        background: rgba(255, 255, 255, 0.14);
+      }
+
+      button.copy-btn.copied {
+        color: #86efac;
+        border-color: rgba(134, 239, 172, 0.4);
+      }
+
+      footer {
+        margin-top: 2rem;
+        font-size: 0.8rem;
+        color: #475569;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+    </style>
   </head>
   <body>
-    <h1>Bienvenido a JVLink 🚀</h1>
-    <p>Acorta tus enlaces largos al instante.</p>
+    <div class="card">
+      <div class="logo">
+        <h1>JVLink</h1>
+        <p>Shorten your long URLs in an instant.</p>
+      </div>
 
-    <div>
-      <input
-        type="url"
-        id="urlInput"
-        placeholder="https://tu-enlace-largo.com"
-        required
-      />
-      <button onclick="acortarEnlace()">Acortar</button>
+      <div class="input-row">
+        <input
+          type="url"
+          id="urlInput"
+          placeholder="https://your-very-long-link.com/goes/here"
+          required
+        />
+        <button class="shorten-btn" id="shortenBtn" onclick="shortenUrl()">Shorten</button>
+      </div>
+
+      <div class="result" id="result">
+        <a id="resultLink" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <span class="error-msg" id="errorMsg"></span>
+        <button class="copy-btn" id="copyBtn" onclick="copyLink()">Copy</button>
+      </div>
     </div>
 
-    <div id="resultado" style="margin-top: 20px; font-weight: bold"></div>
+    <footer>Built with FastAPI &amp; love.</footer>
 
     <script>
-      async function acortarEnlace() {
-        const url = document.getElementById("urlInput").value;
-        const divResultado = document.getElementById("resultado");
+      async function shortenUrl() {
+        const input = document.getElementById("urlInput");
+        const btn = document.getElementById("shortenBtn");
+        const result = document.getElementById("result");
+        const resultLink = document.getElementById("resultLink");
+        const errorMsg = document.getElementById("errorMsg");
+        const copyBtn = document.getElementById("copyBtn");
+
+        const url = input.value.trim();
+        if (!url) return;
+
+        btn.disabled = true;
+        btn.textContent = "Shortening…";
+        result.className = "result";
 
         try {
           const response = await fetch("/shorten", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-
-            body: JSON.stringify({ url: url }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url }),
           });
 
           const data = await response.json();
 
           if (response.ok) {
-            divResultado.innerHTML = `¡Éxito! Tu enlace: <a href="${data.short_url}" target="_blank">${data.short_url}</a>`;
+            resultLink.href = data.short_url;
+            resultLink.textContent = data.short_url;
+            resultLink.style.display = "block";
+            errorMsg.style.display = "none";
+            copyBtn.style.display = "inline-block";
+            copyBtn.textContent = "Copy";
+            copyBtn.classList.remove("copied");
+            result.className = "result visible";
           } else {
-            divResultado.innerHTML = `❌ Error: ${data.detail}`;
+            showError(data.detail || "An error occurred.");
           }
-        } catch (error) {
-          divResultado.innerHTML = "❌ Error de conexión.";
+        } catch {
+          showError("Connection error. Please try again.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Shorten";
         }
       }
+
+      function showError(msg) {
+        const result = document.getElementById("result");
+        const resultLink = document.getElementById("resultLink");
+        const errorMsg = document.getElementById("errorMsg");
+        const copyBtn = document.getElementById("copyBtn");
+
+        resultLink.style.display = "none";
+        copyBtn.style.display = "none";
+        errorMsg.style.display = "block";
+        errorMsg.textContent = "Error: " + msg;
+        result.className = "result error visible";
+      }
+
+      async function copyLink() {
+        const link = document.getElementById("resultLink").href;
+        const copyBtn = document.getElementById("copyBtn");
+
+        try {
+          await navigator.clipboard.writeText(link);
+          copyBtn.textContent = "Copied!";
+          copyBtn.classList.add("copied");
+          setTimeout(() => {
+            copyBtn.textContent = "Copy";
+            copyBtn.classList.remove("copied");
+          }, 2000);
+        } catch {
+          copyBtn.textContent = "Failed";
+        }
+      }
+
+      document.getElementById("urlInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") shortenUrl();
+      });
     </script>
   </body>
 </html>
