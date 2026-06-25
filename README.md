@@ -12,4 +12,4 @@ _Currently under construction. Just a MVP._
 
 ## Current architecture (v1.0)
 
-![alt text](<JVLinks v1.0-1.png>)
+![![alt text](architecture-v1.0.png)](docs/architecture-v1.0.png)
