@@ -37,7 +37,7 @@ services:
   prometheus:
     image: prom/prometheus:v2.54.1
     volumes:
-      - ./app/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
 
     restart: unless-stopped
