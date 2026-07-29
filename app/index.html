@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JVLink - URL Shortener</title>
+    <style>
+      /* Basic styles for a modern and centered look */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f7f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .card {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 100%;
+        max-width: 450px;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 5px;
+      }
+      p.subtitle {
+        color: #666;
+        margin-bottom: 25px;
+      }
+
+      input[type="url"] {
+        width: 90%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        margin-bottom: 15px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+      input[type="url"]:focus {
+        border-color: #007bff;
+      }
+
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      /* Result box (hidden by default) */
+      #result-box {
+        margin-top: 25px;
+        padding: 20px;
+        background-color: #e8f4fd;
+        border: 1px dashed #007bff;
+        border-radius: 8px;
+        display: none; /* Hidden until there is a result */
+      }
+      #result-box a {
+        color: #007bff;
+        font-size: 18px;
+        font-weight: bold;
+        text-decoration: none;
+      }
+      #result-box a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>JVLink</h1>
+      <p class="subtitle">Shorten your links instantly</p>
+
+      <!-- JS handles the form submission now -->
+      <form id="urlForm">
+        <input
+          type="url"
+          id="urlInput"
+          placeholder="https://your-very-long-link.com"
+          required
+        />
+        <br />
+        <button type="submit">Shorten URL</button>
+      </form>
+
+      <!-- The shortened link will appear here -->
+      <div id="result-box">
+        <p style="margin: 0 0 10px 0; color: #333">Here is your link!</p>
+        <a id="short-link" href="" target="_blank"></a>
+      </div>
+    </div>
+
+    <script>
+      // Intercept when the user clicks the button
+      document
+        .getElementById("urlForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevents page reload
+
+          const urlValue = document.getElementById("urlInput").value;
+          const button = event.target.querySelector("button");
+
+          button.textContent = "Shortening..."; // Visual feedback
+
+          try {
+            // Call our own API in the background
+            const response = await fetch("/shorten", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ url: urlValue }),
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+              // Update HTML with the JSON data
+              const linkElement = document.getElementById("short-link");
+              linkElement.href = data.short_url;
+              linkElement.textContent = data.short_url;
+
+              // Show the result box
+              document.getElementById("result-box").style.display = "block";
+            } else {
+              alert("Server error: " + (data.message || "Unknown"));
+            }
+          } catch (error) {
+            alert("Connection error.");
+          } finally {
+            button.textContent = "Shorten URL"; // Restore the button
+          }
+        });
+    </script>
+  </body>
+</html>
