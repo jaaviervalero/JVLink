@@ -34,6 +34,16 @@ services:
     restart: unless-stopped
     depends_on:
       - app
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes:
+      - ./app/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+
+    restart: unless-stopped
+    depends_on:
+      - app
 
 volumes:
   db_data:
+  prometheus_data:

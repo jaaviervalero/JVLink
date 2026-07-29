@@ -3,3 +3,4 @@ psycopg2-binary==2.9.12
 uvicorn==0.51.0
 pydantic==2.13.4
 structlog==26.1.0
+prometheus-fastapi-instrumentator==7.0.0
