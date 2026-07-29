@@ -20,13 +20,10 @@ redirects_total = Counter(
     ["result"]
 )
 
-db_retries_total = Counter(
-    "db_retries_total",
-    "Total number of database connection retries",
-    ["attempt"]
+db_failures_total = Counter(
+    "db_failures_total",
+    "Total number of database connection failures"
 )
-
-
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 first_id = 10000
@@ -57,21 +54,16 @@ class URLRequest(BaseModel):
     url: HttpUrl
 
 def get_db_connection():
-    for attempt in range(3):
-        try:
-            conn = psycopg2.connect(
-                    host=host,
-                    database=database,
-                    user=user,
-                    password=password
-            )
-            break
-        except psycopg2.OperationalError as e:
-            log.warning("db_retry", attempt=attempt + 1, error=str(e))
-            db_retries_total.labels(attempt=attempt + 1).inc()
-            time.sleep(5) 
-    else:
-        log.error("db_connection_failed", attempts=3)
+    try:
+        conn = psycopg2.connect(
+                host=host,
+                database=database,
+                user=user,
+                password=password
+        )
+    except psycopg2.OperationalError as e:
+        log.error("db_failure", error=str(e))
+        db_failures_total.inc()
         raise fastapi.HTTPException(status_code=503)
     try:
         yield conn
