@@ -6,6 +6,26 @@ import os
 import logging
 import structlog
 from fastapi.responses import RedirectResponse, JSONResponse, FileResponse
+from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_client import Counter
+
+urls_shortened_total = Counter(
+    "urls_shortened_total",
+    "Total number of URLs shortened",
+)
+
+redirects_total = Counter(
+    "redirects_total",
+    "Total number of redirects",
+    ["result"]
+)
+
+db_fails_total = Counter(
+    "db_fails_total",
+    "Total number of database connection failures"
+)
+
+
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 first_id = 10000
@@ -28,24 +48,23 @@ structlog.configure(
 
 log = structlog.get_logger()
 app = fastapi.FastAPI()
+Instrumentator().instrument(app, 
+            latency_lowr_buckets=(0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1),).expose(app)
+
 class URLRequest(BaseModel):
     url: HttpUrl
 
 def get_db_connection():
-    for attempt in range(3):
-        try:
-            conn = psycopg2.connect(
-                    host=host,
-                    database=database,
-                    user=user,
-                    password=password
-            )
-            break
-        except psycopg2.OperationalError as e:
-            log.warning("db_retry", attempt=attempt + 1, error=str(e))
-            time.sleep(5) 
-    else:
-        log.error("db_connection_failed", attempts=3)
+    try:
+        conn = psycopg2.connect(
+                host=host,
+                database=database,
+                user=user,
+                password=password
+        )
+    except psycopg2.OperationalError as e:
+        log.error("db_connection_failed")
+        db_fails_total.labels(attempt="1").inc()
         raise fastapi.HTTPException(status_code=503)
     try:
         yield conn
@@ -85,6 +104,7 @@ def shorten_url(url: URLRequest, conn=fastapi.Depends(get_db_connection)):
     
     short_url = f"{base_url}{short_code}"
     log.info("url_shortened", original_url=str(url.url), short_url=short_url)
+    urls_shortened_total.inc()
     return {"original_url": url.url, "short_url": short_url}
 
 @app.head("/{short_code}")
@@ -97,8 +117,10 @@ def redirect_url(short_code: str, conn=fastapi.Depends(get_db_connection)):
 
     if result:
         original_url = result[0]
+        redirects_total.labels(result="hit").inc()
         log.info("redirect_hit", short_code=short_code, original_url=original_url)
         return fastapi.responses.RedirectResponse(original_url)
     else:
+        redirects_total.labels(result="miss").inc()
         log.info("redirect_miss", short_code=short_code)
         return fastapi.responses.JSONResponse(status_code=404, content={"message": "URL no encontrada"})    
