@@ -98,7 +98,8 @@ def shorten_url(url: URLRequest, conn=fastapi.Depends(get_db_connection)):
     url_id = db_id + first_id
     short_code = encode_62(url_id)
 
-    cur.execute("INSERT INTO urls (id, original_url, short_code) VALUES (%s,%s, %s)", (url_id, str(url.url), short_code))
+    cur.execute("INSERT INTO urls (id, original_url, short_code) VALUES (%s,%s, %s)", 
+                (url_id, str(url.url), short_code))
     conn.commit()
     cur.close()
     
