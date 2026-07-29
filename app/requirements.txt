@@ -2,3 +2,4 @@ fastapi==0.140.2
 psycopg2-binary==2.9.12
 uvicorn==0.51.0
 pydantic==2.13.4
+structlog==26.1.0
