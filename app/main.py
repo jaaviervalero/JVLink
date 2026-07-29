@@ -87,6 +87,7 @@ def shorten_url(url: URLRequest, conn=fastapi.Depends(get_db_connection)):
     log.info("url_shortened", original_url=str(url.url), short_url=short_url)
     return {"original_url": url.url, "short_url": short_url}
 
+@app.head("/{short_code}")
 @app.get("/{short_code}")
 def redirect_url(short_code: str, conn=fastapi.Depends(get_db_connection)):
     cur = conn.cursor()
