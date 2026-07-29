@@ -31,7 +31,7 @@
       },
       "id": 10,
       "panels": [],
-      "title": "Resumen",
+      "title": "Overview",
       "type": "row"
     },
     {
@@ -39,7 +39,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Estado del scrape de la app desde Prometheus. UP = responde, DOWN = caída.",
+      "description": "Prometheus scrape status of the app. UP = responding, DOWN = down.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -111,12 +111,12 @@
           "editorMode": "code",
           "expr": "up{job=\"jvlink-app\"}",
           "instant": true,
-          "legendFormat": "estado",
+          "legendFormat": "status",
           "range": false,
           "refId": "A"
         }
       ],
-      "title": "Estado del servicio",
+      "title": "Service status",
       "type": "stat"
     },
     {
@@ -124,7 +124,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Proporcion de respuestas 5xx sobre el total (SLI de errores) en 5 min.",
+      "description": "Ratio of 5xx responses over total (error SLI) over 5 min.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -198,7 +198,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Total de URLs acortadas desde el ultimo arranque de la app (el contador se reinicia al reiniciar el proceso).",
+      "description": "Total URLs shortened since the app last started (the counter resets when the process restarts).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -255,7 +255,7 @@
           "refId": "A"
         }
       ],
-      "title": "URLs acortadas (total)",
+      "title": "URLs shortened (total)",
       "type": "stat"
     },
     {
@@ -263,7 +263,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Fallos de conexion a Postgres tras el fail-fast. Cualquier valor > 0 merece atencion.",
+      "description": "Postgres connection failures after fail-fast. Any value > 0 warrants attention.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -319,12 +319,12 @@
           "editorMode": "code",
           "expr": "db_failures_total",
           "instant": true,
-          "legendFormat": "fallos DB",
+          "legendFormat": "DB failures",
           "range": false,
           "refId": "A"
         }
       ],
-      "title": "Fallos de conexion DB",
+      "title": "DB connection failures",
       "type": "stat"
     },
     {
@@ -337,7 +337,7 @@
       },
       "id": 11,
       "panels": [],
-      "title": "Detalle",
+      "title": "Detail",
       "type": "row"
     },
     {
@@ -345,7 +345,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Percentil 95 de latencia de las peticiones (histograma highr).",
+      "description": "95th percentile of request latency (highr histogram).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -440,7 +440,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Peticiones por segundo servidas por la app (todas las rutas).",
+      "description": "Requests per second served by the app (all routes).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -535,7 +535,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Tasa de respuestas por familia de codigo HTTP. Vigila el 5xx (rojo).",
+      "description": "Response rate by HTTP status family. Watch the 5xx (red).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -691,7 +691,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Porcentaje de redirects que aciertan (hit / total) en los ultimos 5 minutos.",
+      "description": "Percentage of redirects that hit (hit / total) over the last 5 minutes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -775,7 +775,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "JVLink · Observabilidad",
+  "title": "JVLink · Observability",
   "uid": "bftl4kfktkao0a",
   "version": 4,
   "weekStart": ""
