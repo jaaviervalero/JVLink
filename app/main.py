@@ -87,6 +87,23 @@ def encode_62(num):
 def read_root():
     return FileResponse("index.html")
 
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+@app.get("/ready")
+def readiness_check(conn=fastapi.Depends(get_db_connection)):
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT 1")
+        cur.fetchone()
+        cur.close()
+        return {"status": "ready"}
+    except Exception as e:
+        log.error("readiness_check_failure", error=str(e))
+        db_failures_total.inc()
+        raise fastapi.HTTPException(status_code=503, detail="Database connection failed")
+
 @app.post("/shorten")
 def shorten_url(url: URLRequest, conn=fastapi.Depends(get_db_connection)):
     cur = conn.cursor()
