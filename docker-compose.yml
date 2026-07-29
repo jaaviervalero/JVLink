@@ -43,7 +43,18 @@ services:
     restart: unless-stopped
     depends_on:
       - app
-
+  grafana:
+    image: grafana/grafana:11.2.0
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASS}
+    restart: unless-stopped
+    depends_on:
+      - prometheus
 volumes:
   db_data:
   prometheus_data:
+  grafana_data:
