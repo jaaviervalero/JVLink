@@ -761,6 +761,62 @@
       ],
       "title": "Hit ratio",
       "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 12,
+      "panels": [],
+      "title": "Logs",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "description": "Live structured logs from the app (structlog JSON → Alloy → Loki). Expand a line to see parsed fields (event, level, short_code…).",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 13,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "11.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "{container=\"jvlink-app-1\"} | json | __error__=\"\" | line_format \"{{ .event }}{{ if .short_code }}  code={{ .short_code }}{{ end }}{{ if .original_url }}  → {{ .original_url }}{{ end }}\"",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "App logs",
+      "type": "logs"
     }
   ],
   "refresh": "10s",
