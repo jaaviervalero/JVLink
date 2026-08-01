@@ -57,7 +57,27 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
+
+  loki:
+    image: grafana/loki:3.3.2
+    command: -config.file=/etc/loki/loki-config.yml
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/loki
+    restart: unless-stopped
+
+  alloy:
+    image: grafana/alloy:v1.18.0
+    command: run --server.http.listen-addr=0.0.0.0:3101 --storage.path=/var/lib/alloy/data /etc/alloy/config-alloy.yml
+    volumes:
+      - ./loki/alloy-config.yml:/etc/alloy/config-alloy.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    depends_on:
+      - loki
+
 volumes:
   db_data:
   prometheus_data:
   grafana_data:
+  loki_data:
