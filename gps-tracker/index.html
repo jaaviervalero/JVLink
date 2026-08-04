@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>TrailGo · Seguidor de rutas GPX / Wikiloc</title>
+<meta name="description" content="Sigue rutas GPX o de Wikiloc y ve tu ubicación en tiempo real sobre el mapa.">
+<meta name="theme-color" content="#1b6b4a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%BE%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="map"></div>
+
+<header id="topbar">
+  <div id="brand">🥾 <span>TrailGo</span></div>
+  <div id="track-name">Cargando ruta…</div>
+</header>
+
+<div id="controls">
+  <button id="btn-locate" class="ctrl-btn" title="Activar mi ubicación">
+    <svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 3h-2.06A7.002 7.002 0 0013 4.06V2h-2v2.06A7.002 7.002 0 004.06 11H2v2h2.06A7.002 7.002 0 0011 19.94V22h2v-2.06A7.002 7.002 0 0019.94 13H22v-2zm-9 7a5 5 0 110-10 5 5 0 010 10z"/></svg>
+  </button>
+  <button id="btn-fit" class="ctrl-btn" title="Centrar en la ruta">
+    <svg viewBox="0 0 24 24"><path d="M3 3h7V1H1v9h2V3zm11-2v2h7v7h2V1h-9zM3 14H1v9h9v-2H3v-7zm18 7h-7v2h9v-9h-2v7z"/></svg>
+  </button>
+  <label id="btn-upload" class="ctrl-btn" title="Cargar archivo GPX">
+    <svg viewBox="0 0 24 24"><path d="M19 13v6H5v-6H3v6a2 2 0 002 2h14a2 2 0 002-2v-6h-2zm-6-.83l3.29-3.29 1.41 1.41L12 15.41 6.29 9.71l1.41-1.41L11 11.17V1h2v11.17z"/></svg>
+    <input id="file-input" type="file" accept=".gpx,application/gpx+xml" hidden>
+  </label>
+</div>
+
+<div id="panel">
+  <button id="panel-toggle">▲</button>
+  <div id="panel-body">
+    <div class="stats">
+      <div class="stat"><span class="stat-value" id="stat-distance">–</span><span class="stat-label">Distancia</span></div>
+      <div class="stat"><span class="stat-value" id="stat-gain">–</span><span class="stat-label">Desnivel +</span></div>
+      <div class="stat"><span class="stat-value" id="stat-time">–</span><span class="stat-label">Duración</span></div>
+      <div class="stat"><span class="stat-value" id="stat-progress">–</span><span class="stat-label">Progreso</span></div>
+    </div>
+    <div id="location-info">
+      <span id="loc-status">Ubicación desactivada</span>
+      <span id="loc-offroute" class="hidden">⚠ Te has desviado de la ruta</span>
+    </div>
+    <div id="wikiloc-help">
+      <p><strong>¿Ruta de Wikiloc?</strong> Wikiloc no permite abrir sus rutas directamente desde otras webs. Entra en la ruta en wikiloc.com, pulsa <em>Descargar → GPX track</em> y súbela aquí con el botón de subir archivo.</p>
+      <a id="wikiloc-link" href="https://www.wikiloc.com" target="_blank" rel="noopener">Abrir Wikiloc ↗</a>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="hidden"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="app.js"></script>
+</body>
+</html>

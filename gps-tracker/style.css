@@ -1,0 +1,231 @@
+:root {
+  --brand: #1b6b4a;
+  --brand-dark: #124a33;
+  --bg: #f4f6f4;
+  --panel-bg: #ffffff;
+  --text: #1a1f1c;
+  --muted: #6b7570;
+  --danger: #c0392b;
+  --radius: 14px;
+  --shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  overscroll-behavior: none;
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+#topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: max(10px, env(safe-area-inset-top)) 14px 10px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0));
+  pointer-events: none;
+}
+
+#brand {
+  font-weight: 700;
+  font-size: 17px;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  white-space: nowrap;
+}
+
+#track-name {
+  color: #fff;
+  font-size: 13px;
+  opacity: 0.95;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#controls {
+  position: absolute;
+  right: 12px;
+  bottom: 190px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ctrl-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--panel-bg);
+  border: none;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ctrl-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--brand-dark);
+}
+
+.ctrl-btn.active {
+  background: var(--brand);
+}
+.ctrl-btn.active svg { fill: #fff; }
+
+#panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 500;
+  background: var(--panel-bg);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  padding: 6px 16px max(14px, env(safe-area-inset-bottom));
+  transition: transform 0.25s ease;
+}
+
+#panel.collapsed #panel-body { display: none; }
+#panel.collapsed #panel-toggle { transform: rotate(180deg); }
+
+#panel-toggle {
+  display: block;
+  margin: 4px auto 8px;
+  width: 40px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--brand-dark);
+}
+
+.stat-label {
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 2px;
+  text-align: center;
+}
+
+#location-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 6px 2px;
+  border-top: 1px solid #eee;
+}
+
+#loc-offroute {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.hidden { display: none !important; }
+
+#wikiloc-help {
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+#wikiloc-help a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#toast {
+  position: absolute;
+  left: 50%;
+  top: 70px;
+  transform: translateX(-50%);
+  background: rgba(20,20,20,0.9);
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 30px;
+  font-size: 13px;
+  z-index: 900;
+  box-shadow: var(--shadow);
+  max-width: 85vw;
+  text-align: center;
+}
+
+.user-dot {
+  width: 18px;
+  height: 18px;
+  background: #1a73e8;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(26,115,232,0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171a;
+    --panel-bg: #1e2226;
+    --text: #eef1f0;
+    --muted: #9aa5a0;
+    --shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  }
+  #location-info, #wikiloc-help { border-top-color: #2c3237; }
+}
+
+@media (min-width: 700px) {
+  #panel {
+    left: 16px;
+    right: auto;
+    width: 340px;
+    bottom: 16px;
+    border-radius: 16px;
+  }
+  #controls { bottom: 16px; }
+}
